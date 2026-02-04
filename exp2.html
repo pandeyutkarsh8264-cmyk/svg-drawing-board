@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SVG Drawing Board</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #drawingArea {
+      width: 100vw;
+      height: 100vh;
+      border: 2px solid black;
+      display: block;
+      background-color: white;
+    }
+
+    #clearBtn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 10px 14px;
+      font-size: 16px;
+      cursor: pointer;
+      border: 1px solid black;
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button id="clearBtn">🗑 Clear</button>
+
+  <svg id="drawingArea"></svg>
+
+  <script>
+    var svg = document.getElementById("drawingArea");
+    var clearBtn = document.getElementById("clearBtn");
+
+    var isDrawing = false;
+    var currentLine = null;
+
+    svg.addEventListener("mousedown", function (event) {
+      isDrawing = true;
+
+      currentLine = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "polyline"
+      );
+
+      currentLine.setAttribute("stroke", "black");
+      currentLine.setAttribute("stroke-width", "5");
+      currentLine.setAttribute("fill", "none");
+      currentLine.setAttribute("stroke-linecap", "round");
+      currentLine.setAttribute("stroke-linejoin", "round");
+
+      var point = svg.createSVGPoint();
+      point.x = event.offsetX;
+      point.y = event.offsetY;
+      currentLine.points.appendItem(point);
+
+      svg.appendChild(currentLine);
+    });
+
+    svg.addEventListener("mousemove", function (event) {
+      if (isDrawing === false) {
+        return;
+      }
+
+      var point = svg.createSVGPoint();
+      point.x = event.offsetX;
+      point.y = event.offsetY;
+      currentLine.points.appendItem(point);
+    });
+
+    svg.addEventListener("mouseup", function () {
+      isDrawing = false;
+      currentLine = null;
+    });
+
+    svg.addEventListener("mouseleave", function () {
+      isDrawing = false;
+      currentLine = null;
+    });
+
+    clearBtn.addEventListener("click", function () {
+      svg.innerHTML = "";
+    });
+  </script>
+
+</body>
+</html>
